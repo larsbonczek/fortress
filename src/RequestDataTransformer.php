@@ -121,6 +121,9 @@ class RequestDataTransformer implements RequestDataTransformerInterface
                     case 'escape': $transformedValue = $this->escapeHtmlCharacters($transformedValue); break;
                     case 'purge': $transformedValue = $this->purgeHtmlCharacters($transformedValue); break;
                     case 'trim': $transformedValue = $this->trim($transformedValue); break;
+                    case 'upper': $transformedValue = $this->upper($transformedValue); break;
+                    case 'lower': $transformedValue = $this->lower($transformedValue); break;
+                    case 'purgenonwordchars': $transformedValue = $this->purgeNonWordChars($transformedValue); break;
                     default: break;
                 }
             }
@@ -171,6 +174,35 @@ class RequestDataTransformer implements RequestDataTransformerInterface
             return array_map('trim', $value);
         } else {
             return trim($value);
+        }
+    }
+    
+    private function upper($value)
+    {
+        if (is_array($value)) {
+            return array_map('strtoupper', $value);
+        } else {
+            return strtoupper($value);
+        }
+    }
+    
+    private function lower($value)
+    {
+        if (is_array($value)) {
+            return array_map('strtolower', $value);
+        } else {
+            return strtolower($value);
+        }
+    }
+    
+    private function purgeNonWordChars($value)
+    {
+        if (is_array($value)) {
+            return array_map(function($entry) {
+                return preg_replace('/[^\w]+/', '', $entry);
+            }, $value);
+        } else {
+            return preg_replace('/[^\w]+/', '', $value);
         }
     }
 }
